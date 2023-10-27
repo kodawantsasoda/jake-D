@@ -1,18 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-using namespace std; 
-
-bool isPrime(int n){
-	if (n <= 1)
-		return false;
-
-	for (int i = 2; i <= n / 2; i++)
-		if (n % i == 0)
-			return false;
-
-	return true;
-}
+using namespace std;
 
 bool perfectSquare(int x) {
 	int sr = sqrt(x);
@@ -24,28 +12,29 @@ bool perfectSquare(int x) {
 		return false;
 }
 
-//time complexity: O(n^2) + O(n)(log(n) = O(n^2) :(((
+int gcd(int a, int b) {
+	if (b == 0)
+		return a;
+	return gcd(b, a % b);
+}
+
 vector<pair<int, int>> bigButtz(int num) {
 	vector<pair<int, int>> result;
 	vector<int>myVec;
-	int m, n = 0;
+	int m, n, limit = 0;
 
-	//o(n^2)
+	//o(n)
 	for (int i = 2; i < num; i++) {
-		if (isPrime(i) == true) {
-			myVec.push_back(i);
-		}
-	}
-
-	//o(n)*log(n) = nlog(n)
-	for (int i = myVec.size() - 1; i >= 0; i--) {
-		m = myVec[i]; //prime num vec
+		m = i;
 		n = sqrt(num - pow(m, 2));
-		if ((perfectSquare(num - pow(m, 2)) == true) && m > n) {
-			//binary search... since its sorted, only need to search end - i since m > n
-			if (binary_search(myVec.begin(), myVec.end() - i, myVec[i])) {
-				result.push_back(make_pair(myVec[i], n));
-			}
+		if (i == 2) {
+			limit = num - pow(m, 2);
+		}
+		if (perfectSquare(num - pow(m, 2)) == true && m < n && gcd(m,n) == 1) {
+			result.push_back(make_pair(n, m)); //reverse since n will be bigger for a while
+		}
+		if (i == limit) {
+			break;
 		}
 	}
 	return result;
@@ -54,7 +43,7 @@ vector<pair<int, int>> bigButtz(int num) {
 int main() {
 	vector<pair<int, int>> result;
 	result = bigButtz(237133);
-	for (int i = 0; i < result.size(); i++){
+	for (int i = 0; i < result.size(); i++) {
 		cout << result[i].first << ", " << result[i].second << endl;
 	}
 }
